@@ -15,13 +15,13 @@
                     <li><a href="/?type=1"><i class="fa fa-outdent"></i> 其他</a></li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            其他管理 <span class="caret"></span>
+                            组织共享库 <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
+                            <li><a href="#">NZWork</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
+                            <li><a href="#">毕业设计</a></li>
+                            <li><a href="#">软考资料</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -32,14 +32,14 @@
                 <div class="col-md-8">
                     <ul class="demo-btns">
                         <li><a class="btn btn-default-alt" id="upload" onclick="upload()"><i class="fa fa-cloud-upload">
-                                    上传资料</i></a></li>
+                                    上传资料 </i></a></li>
                         <li><a href="#" class="btn btn-primary-alt" id="addFolder" onclick="addFolder()"><i
-                                        class="fa fa-folder"> 新建文件夹</i></a></li>
-                        <li><a onclick="delFiles()" class="btn btn-success-alt"><i class="fa fa-trash-o"> 删除</i></a>
+                                        class="fa fa-folder"> 新建文件夹 </i></a></li>
+                        <li><a onclick="delFiles()" class="btn btn-success-alt"><i class="fa fa-trash-o"> 删除 </i></a>
                         </li>
-                        <li><a onclick="downFiles()" class="btn btn-info-alt"><i class="fa fa-cloud-download"> 下载</i></a></li>
-                        <li><a href="#" class="btn btn-warning-alt"><i class="fa fa-retweet"> 移动</i></a></li>
-                        <li><a href="#" class="btn btn-danger-alt"><i class="fa fa-share-square"> 分享</i></a></li>
+                        <li><a onclick="downFiles()" class="btn btn-info-alt"><i class="fa fa-cloud-download"> 下载 </i></a></li>
+                        <li><a href="/" class="btn btn-warning-alt"><i class="fa fa-retweet"> 移动 </i></a></li>
+                        <li><a onclick="shareFiles()" class="btn btn-danger-alt"><i class="fa fa-share-square"> 分享 </i></a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">

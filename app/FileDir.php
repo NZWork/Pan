@@ -15,6 +15,9 @@ class FileDir extends Model
 	protected $table = 'file_directory';
 
 	CONST NORMAL = 1;
+
+	const SHARE_OPEN = 1;
+	const SHARE_CLOSE = 0;
 	/**
 	 * 文件类型转换
 	 * @var array
@@ -49,7 +52,7 @@ class FileDir extends Model
 		//重名处理
 		$info = $this->where(['name' => $data['name'], 'pre' => $data['pre'], 'type' => $data['type']])->first();
 		if($info){
-			$data['name'] =$data['name'] . '(' . date('m/d H:i:s') . ')' ;
+			$data['name'] = $data['name'] . '(' . date('m/d H:i:s') . ')';
 		}
 		if($id){
 			return $this->where(['id' => $id])->update($data);
@@ -75,7 +78,7 @@ class FileDir extends Model
 			'pre'    => $pre,
 			'status' => self::NORMAL
 		];
-		return $this->select(['id', 'uid', 'pre', 'name', 'type', 'size', 'updated_at'])->where($cond)->get();
+		return $this->select(['id', 'uid', 'pre', 'name', 'type', 'size', 'share','updated_at'])->where($cond)->get();
 	}
 
 	/**
@@ -178,6 +181,21 @@ class FileDir extends Model
 		return $this->where($cond)->delete();
 	}
 
+	/**
+	 * 分享状态更新
+	 * @param int $id
+	 * @param int $status
+	 * @return array
+	 */
+	protected function setShare($id = 0, $share = 1)
+	{
+		$id = intval($id);
+		if(empty($id)){
+			return [];
+		}
+		$cond = ['id' => $id];
+		return $this->where($cond)->update(['share' => $share]);
+	}
 
 	/**
 	 * 文件类型匹配

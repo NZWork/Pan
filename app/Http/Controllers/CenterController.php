@@ -92,7 +92,8 @@ class CenterController extends Controller
 		$user = Session::get('user');
 		$file = FileDir::getById($id);
 		if($user->uid == $file['uid']){
-			$data = FileShare::getByDir($id);
+			$data = FileShare::getByDir($id, FALSE);
+			$refresh = FALSE;
 			if(empty($data)){
 				$token = (XToken::urlsafe_b64encode(base64_decode(XToken::uuid($user->uid . '_'))));
 				$data = [
@@ -103,11 +104,32 @@ class CenterController extends Controller
 					'file_name' => $file['name'],
 					'file_type' => $file['type']
 				];
-				$res = FileShare::setShare($data);
+				FileShare::setShare($data);
+				FileDir::setShare($id, FileDir::SHARE_OPEN);
+				$refresh = TRUE;
+			} elseif(!$data['status']){
+				FileShare::setShare(['status' => FileShare::STAT_NORMAL], ['id' => $data['id']]);
+				FileDir::setShare($id, FileDir::SHARE_OPEN);
+				$refresh = TRUE;
 			}
-			return Response::json(200, ['url' => (Def::SHARE_URL_PRE . $data['token'])], '分享标识');
+			return Response::json(200, ['url' => (Def::SHARE_URL_PRE . $data['token']), 'refresh' => $refresh], '分享标识');
 		}
 		return Response::json(400, [], '分享地址异常');
+	}
+
+	/**
+	 * 关闭分享
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function shareClose()
+	{
+		$id = Input::get('id');
+		$res = FileDir::setShare($id, FileDir::SHARE_CLOSE);
+		if($res !== FALSE){
+			FileShare::setShare(['status' => FileShare::STAT_CLOSE,], ['dir_id' => $id]);
+			return Response::json(200, [], '关闭分享');
+		}
+		return Response::json(400, [], '请求异常');
 	}
 
 	/**
@@ -256,7 +278,7 @@ class CenterController extends Controller
 		$user = Session::get('user');
 		$ids = Input::get('ids') ?: [];
 		$count = 0;
-		$zip_name = 'Tiki_FileDown_'.time().'.zip';
+		$zip_name = 'Tiki_FileDown_' . time() . '.zip';
 		$zip_path = Def::ZIP_PATH . $user->uid . '_';
 		$zip = new ZipArchive;
 		$zip->open($zip_path . $zip_name, ZipArchive::CREATE);
@@ -265,7 +287,7 @@ class CenterController extends Controller
 			if(isset($data[0]) && isset($user->uid)){
 				$file = FileMap::getById(intval($data[0]['file_map']));
 				$path = Def::ROOT_PATH . '/' . Def::STORE_PATH . '/' . date('Ym//d//', strtotime($file->updated_at)) . $file->file_sha1;
-				$zip->addFile($path,$data[0]['name']);
+				$zip->addFile($path, $data[0]['name']);
 				$count++;
 			}
 		}
@@ -300,6 +322,36 @@ class CenterController extends Controller
 			}
 		}
 		return Response::json(200, [], '文件重命名操作失败');
+	}
+
+	public function shareFiles()
+	{
+		$user = Session::get('user');
+		$ids = Input::get('ids') ?: [];
+		foreach($ids as $id){
+			$file = FileDir::getById($id);
+			if($user->uid == $file['uid']){
+				$data = FileShare::getByDir($id, FALSE);
+				if(empty($data)){
+					$token = (XToken::urlsafe_b64encode(base64_decode(XToken::uuid($user->uid . '_'))));
+					$data = [
+						'dir_id'    => $id,
+						'share_uid' => $user->uid,
+						'token'     => $token,
+						'file_size' => $file['size'],
+						'file_name' => $file['name'],
+						'file_type' => $file['type']
+					];
+					FileShare::setShare($data);
+					FileDir::setShare($id, FileDir::SHARE_OPEN);
+				} elseif(!$data['status']){
+					FileShare::setShare(['status' => FileShare::STAT_NORMAL], ['id' => $data['id']]);
+					FileDir::setShare($id, FileDir::SHARE_OPEN);
+				}
+			}
+		}
+		return Response::json(200, [], '批量分享处理');
+
 	}
 
 	/**

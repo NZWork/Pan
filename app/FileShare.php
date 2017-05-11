@@ -50,13 +50,16 @@ class FileShare extends Model
 	 * @param int $id
 	 * @return array
 	 */
-	protected function getByDir($id = 0)
+	protected function getByDir($id = 0, $normal = TRUE)
 	{
 		$id = intval($id);
 		if((empty($id))){
 			return [];
 		}
-		$cond = ['id' => $id];
+		$cond = ['dir_id' => $id];
+		if($normal){
+			$cond['status'] = self::STAT_NORMAL;
+		}
 		return $this->where($cond)->first();
 	}
 

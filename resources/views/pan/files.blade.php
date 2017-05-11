@@ -22,7 +22,8 @@
                                     <tbody>
                                     @foreach($data as $item)
                                         <tr>
-                                            <td width="5%"><input type="checkbox" name="checkbox" value="{{$item->id}}" @if($item->type == 0) disabled @endif></td>
+                                            <td width="5%"><input type="checkbox" name="checkbox" value="{{$item->id}}"
+                                                                  @if($item->type == 0) disabled @endif></td>
                                             <td width="30%">
                                                 <div class="outer90 fileList">
                                                     <a @if($item->type == 0)href="/openFolder?pre={{$item->id}}" @endif>
@@ -40,16 +41,25 @@
                                                 </div>
                                             </td>
                                             <td width="15%" class="actions-hover actions-fade fileList">
-                                                <a onclick="rename({{$item->id}} ,'{{$item->name}}')">
+                                                <a onclick="rename({{$item->id}} ,'{{$item->name}}')" title="重命名">
                                                     <i class="fa fa-pencil"> </i>
                                                 </a>
                                                 @if($item->type)
-                                                    <a href="/getFile?id={{$item->id}}">
+                                                    <a href="/getFile?id={{$item->id}}" title="下载文件">
                                                         <i class="fa fa-download"> </i>
                                                     </a>
-                                                    <a onclick="shareUrl({{$item->id}})">
-                                                        <i class="fa fa-share"> </i>
-                                                    </a>
+                                                    @if($item->share)
+                                                        <a onclick="shareUrl({{$item->id}})" title="查看地址">
+                                                            <i class="fa fa-search"> </i>
+                                                        </a>
+                                                        <a onclick="shareClose({{$item->id}})" title="关闭分享">
+                                                            <i class="fa fa-close"> </i>
+                                                        </a>
+                                                    @else
+                                                        <a onclick="shareUrl({{$item->id}})" title="分享">
+                                                            <i class="fa fa-share"> </i>
+                                                        </a>
+                                                    @endif
                                                 @endif
                                                 <a href="/delete?id={{$item->id}}" title="删除">
                                                     <i class="fa fa-trash"> </i> </a>

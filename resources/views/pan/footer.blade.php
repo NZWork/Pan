@@ -1,5 +1,5 @@
 <div class="col-xs-12 text-center" style="margin-top: 25px">
-    <span style="color:gray"> NZWork Copyright©2016-2017 </span>
+    <span style="color:gray"> ©2016-2017 NZWork </span>
 </div>
 
 </section>
@@ -44,11 +44,11 @@
                 type: 2,
                 area: ['400px', '300px'],
                 title: '上传列表',
-                offset: 'rb', //右下角
+                //offset: 'rb', //右下角
                 content: '/upload',
                 shade: 0,//不显示遮罩
                 cancel: function(index, layero) {
-                    if(confirm("请确认文件已上传完毕\r\n关闭将自动刷新目录")) {
+                    if(confirm("请确认文件已上传完毕\r\n关闭后将自动刷新目录")) {
                         layer.close(index)
                         upList = !upList;
                         Pjax('/openFolder');
@@ -99,16 +99,38 @@
             data: {id: id},
             success: function(data) {
                 if(data.code == 200) {
-                    console.log(data);
                     layer.msg('分享地址：' + data.result.url, {
                         time: 15000, //15s后自动关闭
                     });
+                    if(data.result.refresh) {
+                        Pjax('/openFolder');
+                    }
                 }else {
                     layer.msg('请求异常', {
                         time: 3000, //3s后自动关闭
                     });
                 }
 
+            }
+        });
+    }
+
+    /**
+     * 关闭分享
+     */
+    function shareClose(id) {
+        $.ajax({
+            url: '/shareClose',
+            type: 'POST',
+            data: {'id': id},
+            success: function(data) {
+                console.log(data);
+                layer.msg(data.msg, {
+                    time: 3000, //3s后自动关闭
+                });
+                if(data.code == 200) {
+                    Pjax('/openFolder');
+                }
             }
         });
     }
@@ -187,7 +209,17 @@
         $("input[name='checkbox']:checked").each(function() {
             cbox.push(this.value);
         });
-        console.log(cbox);
+        $.ajax({
+            url: '/shareFiles',
+            type: 'POST',
+            data: {ids: cbox},
+            success: function(data) {
+                layer.msg(data.msg, {
+                    time: 3000, //3s后自动关闭
+                });
+                Pjax('/openFolder');
+            }
+        });
     }
 
     //pjax 刷新

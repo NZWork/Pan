@@ -54,8 +54,10 @@ Route::group(['middleware' => ['web', 'login']], function () {
 	Route::get('/getFile', 'CenterController@getFile');					//用户下载个人文件
 	Route::post('/dels', 'CenterController@delDirs');					//批量删除
 	Route::post('/downFiles', 'CenterController@zipDownFiles');			//批量下载
+	Route::post('/shareFiles', 'CenterController@shareFiles');			//批量分享
 	Route::post('/rename', 'CenterController@rename');					//重命名
 	Route::post('/getShare', 'CenterController@shareUrl');				//获取分享地址
+	Route::post('/shareClose', 'CenterController@shareClose');			//关闭分享
 	Route::post('/shareLike', 'CenterController@shareLike');			//分享点赞
 	Route::post('/shareReport', 'CenterController@shareReport');		//分享举报
 
